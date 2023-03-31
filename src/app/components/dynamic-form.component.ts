@@ -7,23 +7,30 @@ import {DynamicFormService} from "../services/dynamic-form.service";
 @Component({
     selector: 'app-dynamic-form',
     template: `
-    <form [formGroup]="form">
-      <div *ngFor="let input of inputs">
-        <label>{{ input.label }}</label>
-        <input 
-          [type]="input.type" 
-          [formControlName]="input.name" 
-          [placeholder]="input.placeholder"
-            (blur)="error = !form.valid"
-        />
-         <span *ngIf="error"> {{ input.label }} is required </span> 
-      </div>
-        <button type="submit">Submit</button>
-    </form>
-  `
+        <form [formGroup]="form">
+            <div *ngFor="let input of inputs">
+                <label>{{ input.label }}</label>
+                <input
+                        [type]="input.type"
+                        [formControlName]="input.name"
+                        [placeholder]="input.placeholder"
+                        (blur)="error = !form.valid"
+                />
+                <div *ngIf="error">
+                    <span *ngIf="form.get(input.name)?.hasError('required')">
+                    {{
+                        'This field is required'
+                    }}
+                    </span>
+                </div>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    `
 })
 export class DynamicFormComponent {
     error: boolean = false
+    errorLists: any = {};
 
     form: FormGroup;
     inputs: InputConfig[] = [
@@ -35,7 +42,12 @@ export class DynamicFormComponent {
             validations: [
                 {
                     name: 'required',
-                    validator: Validators.required
+                    validator: Validators.required,
+                    message: 'This field is required'
+                },
+                {
+                    name: 'pattern',
+                    validator: Validators.pattern('^[a-zA-Z]+$')
                 }
             ]
         },
@@ -61,4 +73,7 @@ export class DynamicFormComponent {
         this.form = this.formService.toFormGroup(this.inputs);
     }
 
+    protected readonly Object = {
+        keys: Object.keys
+    }
 }

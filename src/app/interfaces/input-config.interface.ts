@@ -4,5 +4,5 @@ export interface InputConfig {
     name: string;
     placeholder?: string;
     options?: {key: string, value: string}[];
-    validations?: {name: string, validator: any}[];
+    validations?: {name: string, validator: any, message?: string}[];
 }
